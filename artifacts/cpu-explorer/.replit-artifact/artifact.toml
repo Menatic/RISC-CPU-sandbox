@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Modern CPU Explorer"
+version = "1.0.0"
+id = "artifacts/cpu-explorer"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21326
+
+[services.development]
+run = "pnpm --filter @workspace/cpu-explorer run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cpu-explorer", "run", "build" ]
+publicDir = "artifacts/cpu-explorer/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21326"
+BASE_PATH = "/"

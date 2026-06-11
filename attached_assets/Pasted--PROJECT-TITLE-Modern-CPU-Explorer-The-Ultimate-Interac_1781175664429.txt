@@ -1,0 +1,696 @@
+# PROJECT TITLE
+
+Modern CPU Explorer – The Ultimate Interactive Computer Architecture Laboratory
+
+# PROJECT GOAL
+
+Build the most advanced browser-based CPU architecture simulator available online.
+
+This should not be another RISC-V pipeline visualizer.
+
+This should be a complete educational and engineering platform that demonstrates how processors evolved from simple single-cycle CPUs into modern superscalar, out-of-order, speculative execution machines.
+
+The final product should look like a tool that could be used by university professors, computer architecture researchers, engineering students, and recruiters.
+
+The application must be deployable on Vercel and run entirely in the browser.
+
+The project should combine:
+
+* Computer Architecture
+* Operating Systems Concepts
+* Performance Engineering
+* Visualization
+* Modern Web Development
+* Interactive Learning
+
+The result should feel like:
+
+"Figma meets VS Code meets Intel Architecture Lab"
+
+---
+
+# TECH STACK
+
+Frontend:
+
+* Next.js latest App Router
+* React
+* TypeScript
+* Tailwind CSS
+* Framer Motion
+* Zustand
+
+Visualization:
+
+* SVG Architecture Rendering
+* React Flow
+* D3.js
+* Canvas Rendering where needed
+
+Editor:
+
+* Monaco Editor
+
+Charts:
+
+* Recharts
+
+Deployment:
+
+* Vercel
+
+Performance:
+
+* Dynamic Imports
+* Lazy Loading
+* Code Splitting
+
+Target Lighthouse Score:
+95+
+
+---
+
+# LANDING PAGE
+
+Create a world-class landing page.
+
+Hero Section:
+
+Headline:
+
+"Explore How Modern CPUs Really Work"
+
+Subheading:
+
+From basic RISC-V pipelines to speculative execution, branch prediction, superscalar architectures, and out-of-order execution.
+
+Features Preview:
+
+* Pipeline Simulator
+* Branch Predictor Lab
+* Cache Simulator
+* Tomasulo Engine
+* Superscalar Execution Lab
+* CPU Evolution Explorer
+* Performance Analytics
+
+Include beautiful animations.
+
+---
+
+# CPU EVOLUTION MODE
+
+Create a mode that lets users switch between:
+
+1. Single Cycle CPU
+2. Multi Cycle CPU
+3. Five Stage Pipeline
+4. Forwarding Pipeline
+5. Hazard Detection Pipeline
+6. Branch Predicted Pipeline
+7. Superscalar Processor
+8. Out Of Order Processor
+9. Speculative Execution Processor
+
+When users switch modes:
+
+* Datapath updates
+* Animation updates
+* Metrics update
+* Educational content updates
+
+Show evolution timeline.
+
+---
+
+# RISC-V ASSEMBLY IDE
+
+Build a professional code editor.
+
+Support:
+
+RV32I
+
+Include:
+
+* Syntax highlighting
+* Auto-complete
+* Error detection
+* Line numbers
+* Instruction documentation
+
+Example Programs:
+
+* Fibonacci
+* Bubble Sort
+* Binary Search
+* Matrix Multiplication
+* Prime Generator
+* Merge Sort
+* Quick Sort
+* DFS
+* BFS
+
+One-click load.
+
+---
+
+# REAL EXECUTION ENGINE
+
+Build a complete instruction simulator.
+
+Track:
+
+* Program Counter
+* Registers
+* Memory
+* Control Signals
+* Instruction States
+
+Execution Modes:
+
+* Run
+* Pause
+* Step
+* Cycle Advance
+* Rewind
+* Run To Completion
+
+---
+
+# FIVE STAGE PIPELINE VISUALIZER
+
+Render:
+
+IF
+ID
+EX
+MEM
+WB
+
+Instructions should move visually between stages.
+
+Each cycle should animate.
+
+Show:
+
+* Current instruction
+* Pipeline occupancy
+* Stall states
+
+---
+
+# HAZARD DETECTION LAB
+
+Implement:
+
+Data Hazards:
+
+* RAW
+* WAR
+* WAW
+
+Control Hazards
+
+Structural Hazards
+
+Visualization:
+
+* Red warning effects
+* Dependency arrows
+* Hazard explanations
+
+Example:
+
+Instruction A writes x1
+
+Instruction B reads x1
+
+Display:
+
+RAW Hazard Detected
+
+Explain why.
+
+---
+
+# FORWARDING ENGINE
+
+Implement:
+
+EX → EX
+
+MEM → EX
+
+WB → EX
+
+Animate data flow.
+
+Display:
+
+* Source
+* Destination
+* Saved cycles
+
+Users should clearly understand forwarding.
+
+---
+
+# BRANCH PREDICTION LAB
+
+Implement:
+
+* Static Prediction
+* Always Taken
+* Always Not Taken
+* One Bit Predictor
+* Two Bit Saturating Predictor
+* GShare Predictor
+* Tournament Predictor
+
+Metrics:
+
+* Accuracy
+* Mispredictions
+* Flushes
+* CPI Impact
+
+Show live comparison charts.
+
+Allow users to switch predictors during simulation.
+
+---
+
+# CACHE HIERARCHY SIMULATOR
+
+Create interactive cache system.
+
+Components:
+
+* L1 Instruction Cache
+* L1 Data Cache
+* L2 Cache
+* L3 Cache
+* Main Memory
+
+Visualize:
+
+Cache Hits
+
+Cache Misses
+
+Cache Evictions
+
+Memory Access Time
+
+Allow changing:
+
+* Cache Size
+* Associativity
+* Block Size
+
+Display performance impact.
+
+---
+
+# SUPERSCALAR PROCESSOR LAB
+
+Execution Modes:
+
+* Single Issue
+* Dual Issue
+* Quad Issue
+
+Visualize:
+
+Multiple instructions executing simultaneously.
+
+Show:
+
+* Throughput
+* IPC
+* Resource Utilization
+
+Compare against standard pipeline.
+
+---
+
+# OUT OF ORDER EXECUTION LAB
+
+Implement Tomasulo-style simulation.
+
+Visual Components:
+
+Reservation Stations
+
+Reorder Buffer
+
+Instruction Queue
+
+Execution Units
+
+Common Data Bus
+
+Show:
+
+Issue
+
+Dispatch
+
+Execute
+
+Write Back
+
+Commit
+
+Instructions should execute dynamically.
+
+Visualize dependencies.
+
+Show performance gains.
+
+---
+
+# REGISTER RENAMING ENGINE
+
+Visualize:
+
+Architectural Registers
+
+Physical Registers
+
+Rename Table
+
+Demonstrate:
+
+False Dependencies
+
+WAR Hazards
+
+WAW Hazards
+
+Explain how renaming eliminates them.
+
+---
+
+# SPECULATIVE EXECUTION LAB
+
+Show:
+
+Prediction
+
+Speculative Instructions
+
+Correct Prediction
+
+Rollback
+
+Pipeline Flush
+
+Animate entire process.
+
+Show performance gains.
+
+---
+
+# PIPELINE TIMELINE VIEW
+
+Generate a Gantt chart.
+
+Rows:
+
+Instructions
+
+Columns:
+
+Clock Cycles
+
+Example:
+
+Instruction    1 2 3 4 5
+
+ADD           IF ID EX MEM WB
+
+SUB              IF ID EX MEM WB
+
+MUL                 IF ID EX MEM WB
+
+Animate progression.
+
+---
+
+# CPU BLUEPRINT MODE
+
+Create zoomable architecture diagrams.
+
+Components:
+
+Program Counter
+
+Instruction Memory
+
+Control Unit
+
+Register File
+
+ALU
+
+Forwarding Unit
+
+Hazard Unit
+
+Caches
+
+Branch Predictor
+
+Reservation Stations
+
+Reorder Buffer
+
+Clicking components should open educational panels.
+
+Explain:
+
+Purpose
+
+Inputs
+
+Outputs
+
+Role
+
+Real-world relevance
+
+---
+
+# PERFORMANCE ANALYTICS DASHBOARD
+
+Metrics:
+
+CPI
+
+IPC
+
+Execution Time
+
+Cycles
+
+Instructions Retired
+
+Branch Accuracy
+
+Cache Hit Rate
+
+Cache Miss Rate
+
+Hazard Count
+
+Forwarding Events
+
+Pipeline Utilization
+
+Use beautiful charts.
+
+---
+
+# CPU COMPARISON LAB
+
+Run same program across:
+
+Single Cycle
+
+Pipeline
+
+Forwarding Pipeline
+
+Superscalar
+
+Out Of Order
+
+Display side-by-side comparison.
+
+Metrics:
+
+Execution Time
+
+Cycles
+
+IPC
+
+CPI
+
+Speedup
+
+Efficiency
+
+Generate rankings.
+
+---
+
+# INTERVIEW PREPARATION MODE
+
+Generate architecture interview questions.
+
+Difficulty:
+
+Beginner
+
+Intermediate
+
+Advanced
+
+Expert
+
+Examples:
+
+Explain RAW hazards.
+
+What is register renaming?
+
+How does Tomasulo work?
+
+What is speculative execution?
+
+What is branch prediction?
+
+Provide instant feedback.
+
+---
+
+# EDUCATIONAL KNOWLEDGE SYSTEM
+
+Every architecture concept should have:
+
+Definition
+
+Animation
+
+Examples
+
+Advantages
+
+Disadvantages
+
+Real-world CPU usage
+
+Companies using it
+
+Historical context
+
+---
+
+# RECRUITER MODE
+
+Create a dedicated page called:
+
+Engineering Showcase
+
+Display:
+
+Architecture Skills
+
+Systems Knowledge
+
+Performance Engineering
+
+Simulation Complexity
+
+Project Statistics
+
+Lines of Code
+
+Supported Features
+
+Technical Highlights
+
+This page should be portfolio-ready.
+
+---
+
+# EXPORT FEATURES
+
+Export:
+
+PDF Report
+
+PNG Visualization
+
+JSON Session
+
+Architecture Analysis Report
+
+Include:
+
+Program
+
+Execution Trace
+
+Pipeline Statistics
+
+Hazards
+
+Branch Metrics
+
+Cache Metrics
+
+Performance Summary
+
+---
+
+# DESIGN REQUIREMENTS
+
+Modern Apple-level design.
+
+Use:
+
+Glassmorphism
+
+Microinteractions
+
+Smooth Animations
+
+Dark Mode
+
+Light Mode
+
+Responsive Design
+
+Professional Typography
+
+Beautiful Architecture Diagrams
+
+Interactive Tooltips
+
+Hover States
+
+Zero clutter.
+
+---
+
+# FINAL OBJECTIVE
+
+The finished application should make a recruiter immediately think:
+
+"This student understands computer architecture far beyond a normal undergraduate RISC-V pipeline project and has the software engineering skills to build a polished production-grade educational platform."
+
+The simulator should feel closer to a miniature CPU research laboratory than a student project.
