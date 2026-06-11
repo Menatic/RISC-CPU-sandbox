@@ -8,7 +8,6 @@ Built for students, educators, hardware engineers, and anyone who wants to under
 
 ## Live Demo
 
-- **https://cpu-sandbox-with-hdl.vercel.app/**
 - **https://cpu-tool-educational-sim.vercel.app/**
 
 Key routes:
