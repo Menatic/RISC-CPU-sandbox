@@ -6,10 +6,13 @@ import {
   countHdlLines, getSourceForModule, totalModuleCount,
   type VerilogCoreId, type VerilogModuleMeta,
 } from '@/data/verilogManifest';
+import { RtlBrowserSimulator } from '@/components/rtl/RtlBrowserSimulator';
 import {
   Cpu, Code2, GitBranch, Layers, ChevronRight, Terminal,
-  Building2, Microchip, BookOpen, ExternalLink,
+  Building2, Microchip, BookOpen, ExternalLink, PlayCircle,
 } from 'lucide-react';
+
+type ViewTab = 'source' | 'simulate';
 
 function ModuleList({
   modules, selected, onSelect,
@@ -77,6 +80,7 @@ function StagePipelineViz({ activeStage }: { activeStage?: number }) {
 
 export default function Verilog() {
   const [core, setCore] = useState<VerilogCoreId>('15stage');
+  const [view, setView] = useState<ViewTab>('simulate');
   const modules = core === '5stage' ? MODULES_5STAGE : MODULES_15STAGE;
   const [selected, setSelected] = useState<VerilogModuleMeta>(MODULES_15STAGE[0]);
   const profile = CORE_PROFILES[core];
@@ -103,12 +107,26 @@ export default function Verilog() {
             <h1 className="text-3xl font-bold">Verilog HDL Cores</h1>
           </div>
           <p className="text-muted-foreground max-w-2xl">
-            Production-style synthesizable RTL ships with this explorer — not just a browser simulator.
-            Browse real Verilog sources, run <code className="text-xs bg-secondary px-1 rounded">make sim</code> locally,
-            and map modules to the interactive labs.
+            Production-style synthesizable RTL plus <strong className="text-foreground">in-browser RTL testbench simulation</strong> —
+            run the same program as <code className="text-xs bg-secondary px-1 rounded">tb_riscv_core.v</code> with live pipeline and waveforms.
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            {(['simulate', 'source'] as ViewTab[]).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setView(tab)}
+                className={`px-3 py-2 text-sm flex items-center gap-1.5 ${
+                  view === tab ? 'bg-primary text-primary-foreground' : 'bg-card hover:bg-secondary'
+                }`}
+              >
+                {tab === 'simulate' ? <PlayCircle className="w-4 h-4" /> : <Code2 className="w-4 h-4" />}
+                {tab === 'simulate' ? 'Live Sim' : 'RTL Source'}
+              </button>
+            ))}
+          </div>
           {(['15stage', '5stage'] as VerilogCoreId[]).map((id) => (
             <button
               key={id}
@@ -176,7 +194,13 @@ export default function Verilog() {
         </div>
       )}
 
-      {/* Editor layout */}
+      {view === 'simulate' && (
+        <div className="rounded-lg border border-border bg-card p-5">
+          <RtlBrowserSimulator core={core} />
+        </div>
+      )}
+
+      {view === 'source' && (
       <div className="grid lg:grid-cols-[240px_1fr_280px] gap-4 min-h-[560px]">
         <div className="rounded-lg border border-border bg-card p-3">
           <p className="text-xs font-semibold uppercase text-muted-foreground mb-3 px-2">Modules</p>
@@ -256,6 +280,7 @@ make sim`}
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

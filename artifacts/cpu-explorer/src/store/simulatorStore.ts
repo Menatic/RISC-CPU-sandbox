@@ -104,8 +104,8 @@ interface SimulatorState {
   setBranchPrediction: (enabled: boolean) => void;
 }
 
-const EMPTY_PIPELINE: PipelineState = { IF: null, ID: null, EX: null, MEM: null, WB: null };
-const INITIAL_STATS: SimStats = { cycles: 0, instructionsRetired: 0, cpi: 0, ipc: 0, stalls: 0, flushes: 0, forwardedOps: 0, hazards: 0 };
+export const EMPTY_PIPELINE: PipelineState = { IF: null, ID: null, EX: null, MEM: null, WB: null };
+export const INITIAL_STATS: SimStats = { cycles: 0, instructionsRetired: 0, cpi: 0, ipc: 0, stalls: 0, flushes: 0, forwardedOps: 0, hazards: 0 };
 
 function makeSlot(instr: Instruction, regs: number[], rs1Override?: number, rs2Override?: number): PipelineSlot {
   return {
@@ -187,7 +187,7 @@ function memWrite(mem: MemMap, addr: number, val: number, width: number): MemMap
   return next;
 }
 
-function advancePipeline(
+export function advancePipeline(
   current: PipelineState,
   fetchPC: number,
   program: Instruction[],
@@ -403,7 +403,7 @@ function advancePipeline(
   };
 }
 
-function isPipelineDone(stages: PipelineState, fetchPC: number, program: Instruction[]): boolean {
+export function isPipelineDone(stages: PipelineState, fetchPC: number, program: Instruction[]): boolean {
   const maxPC = program.length > 0 ? program[program.length - 1].pc : -1;
   return fetchPC > maxPC && !stages.IF && !stages.ID && !stages.EX && !stages.MEM && !stages.WB;
 }
