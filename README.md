@@ -5,6 +5,7 @@ A next-generation interactive computer architecture laboratory that transforms C
 Modern CPU Explorer is an advanced browser-based platform designed to help students, educators, engineers, and recruiters understand how modern processors actually work.
 
 Instead of presenting CPU architecture as textbook diagrams, Modern CPU Explorer allows users to write RISC-V assembly code, execute programs cycle-by-cycle, inspect internal processor state, visualize pipeline behavior, analyze hazards, explore forwarding paths, and understand advanced concepts such as branch prediction, superscalar execution, speculative execution, and out-of-order processing.
+
 ---
 
 # 🌐 Live Demo
