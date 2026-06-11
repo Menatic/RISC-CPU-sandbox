@@ -1,6 +1,6 @@
-# [Project name]
+# CPU Sandbox Explorer
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A comprehensive platform for exploring, debugging, and analyzing CPU architectures through interactive sandboxed environments. Users can experiment with CPU designs, execute code in a safe sandbox, and gain insights into processor behavior.
 
 ## Run & Operate
 

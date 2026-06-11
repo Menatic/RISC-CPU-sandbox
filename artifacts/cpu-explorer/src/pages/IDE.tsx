@@ -9,6 +9,22 @@ import {
 } from 'lucide-react';
 import { Link } from 'wouter';
 
+const CUSTOM_PROGRAM = {
+  id: 'custom',
+  name: 'Custom Code',
+  category: 'Open Sandbox',
+  description: 'Write your own RISC-V program here. Paste complex custom code, assemble it, and test it in the simulator.',
+  code: `# Custom RISC-V program
+# Write or paste your own assembly here, then click Assemble.
+
+ADDI  a0, zero, 5
+ADDI  a1, zero, 9
+ADD   a2, a0, a1
+`,
+} as const;
+
+const programOptions = [...examplePrograms, CUSTOM_PROGRAM];
+
 const REG_COLORS = [
   'border-gray-600 bg-gray-900/30',      // x0 zero
   'border-indigo-500/50 bg-indigo-900/20', // x1 ra
@@ -62,14 +78,10 @@ export default function IDE() {
   } = useSimulatorStore();
 
   const [selectedProgram, setSelectedProgram] = useState(examplePrograms[0].id);
+  const [customSource, setCustomSource] = useState(CUSTOM_PROGRAM.code);
   const [activeTab, setActiveTab] = useState<PanelTab>('registers');
   const [showHex, setShowHex] = useState(false);
   const [prevRegs, setPrevRegs] = useState<number[]>(new Array(32).fill(0));
-
-  useEffect(() => {
-    const prog = examplePrograms.find(p => p.id === selectedProgram);
-    if (prog) setSource(prog.code);
-  }, [selectedProgram]);
 
   useEffect(() => {
     if (lastChangedReg !== null) {
@@ -115,10 +127,35 @@ export default function IDE() {
   const canStep = isAssembled && !isComplete;
   const canRun  = isAssembled && !isComplete;
 
-  const selectedProg = examplePrograms.find(p => p.id === selectedProgram);
+  const selectedProg = programOptions.find(p => p.id === selectedProgram) ?? CUSTOM_PROGRAM;
+
+  const handleProgramChange = useCallback((nextProgramId: string) => {
+    if (selectedProgram === CUSTOM_PROGRAM.id) {
+      setCustomSource(assemblySource);
+    }
+
+    setSelectedProgram(nextProgramId);
+
+    if (nextProgramId === CUSTOM_PROGRAM.id) {
+      setSource(selectedProgram === CUSTOM_PROGRAM.id ? assemblySource : customSource);
+      return;
+    }
+
+    const nextProgram = examplePrograms.find((program) => program.id === nextProgramId);
+    if (nextProgram) {
+      setSource(nextProgram.code);
+    }
+  }, [assemblySource, customSource, selectedProgram, setSource]);
+
+  const handleSourceChange = useCallback((value: string) => {
+    setSource(value);
+    if (selectedProgram === CUSTOM_PROGRAM.id) {
+      setCustomSource(value);
+    }
+  }, [selectedProgram, setSource]);
 
   return (
-    <div className="flex h-screen w-full bg-background text-foreground" style={{ paddingTop: '4rem', paddingLeft: '16rem' }}>
+    <div className="flex h-[calc(100vh-4rem)] w-full bg-background text-foreground">
       {/* ======== LEFT: EDITOR PANEL ======== */}
       <div className="flex flex-col w-[54%] border-r border-border min-h-0">
 
@@ -127,9 +164,9 @@ export default function IDE() {
           <select
             className="bg-background border border-border rounded px-2 py-1 text-sm text-foreground"
             value={selectedProgram}
-            onChange={e => setSelectedProgram(e.target.value)}
+            onChange={e => handleProgramChange(e.target.value)}
           >
-            {examplePrograms.map(p => (
+            {programOptions.map(p => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
@@ -180,7 +217,7 @@ export default function IDE() {
             defaultLanguage="plaintext"
             theme="vs-dark"
             value={assemblySource}
-            onChange={val => setSource(val ?? '')}
+            onChange={val => handleSourceChange(val ?? '')}
             options={{
               minimap: { enabled: false },
               fontSize: 13,

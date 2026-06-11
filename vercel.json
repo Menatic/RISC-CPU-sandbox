@@ -1,0 +1,10 @@
+{
+  "buildCommand": "pnpm --filter @workspace/cpu-explorer run build",
+  "outputDirectory": "artifacts/cpu-explorer/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

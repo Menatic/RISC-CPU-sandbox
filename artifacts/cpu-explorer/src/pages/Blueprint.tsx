@@ -69,6 +69,7 @@ export default function Blueprint() {
   const [hoverId, setHoverId] = useState<string | null>(null);
 
   const SVG_W = 720; const SVG_H = 400;
+  const SVG_ASPECT = SVG_H / SVG_W;
 
   // Draw simplified wires
   const wires = [
@@ -89,66 +90,89 @@ export default function Blueprint() {
       </div>
 
       <div className="bg-card border border-border rounded-lg p-4">
-        <div className="text-xs text-muted-foreground mb-2 flex items-center gap-4">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500/30 inline-block border border-blue-500" /> Instruction path</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-purple-500/30 inline-block border border-purple-500" /> Data path</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-500/30 inline-block border border-red-500" /> Control path</span>
+        <div className="text-xs text-muted-foreground mb-3 flex items-center gap-4">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded inline-block border-2" style={{background:'#3b82f620',borderColor:'#3b82f6'}} /> Instruction path</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded inline-block border-2" style={{background:'#8b5cf620',borderColor:'#8b5cf6'}} /> Data path</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded inline-block border-2" style={{background:'#f43f5e20',borderColor:'#f43f5e'}} /> Control path</span>
         </div>
 
-        {/* SVG Blueprint */}
-        <div className="overflow-x-auto">
-          <svg width={SVG_W} height={SVG_H} className="rounded-lg bg-slate-950/50 border border-border">
+        {/* SVG Blueprint — full-width, scales with container */}
+        <div className="w-full flex justify-center">
+          <svg
+            viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+            width="100%"
+            className="rounded-lg border border-border"
+            style={{ maxWidth: SVG_W, display: 'block', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}
+          >
             {/* Grid dots */}
             {Array.from({ length: 24 }, (_, x) =>
               Array.from({ length: 14 }, (_, y) => (
-                <circle key={`${x}-${y}`} cx={x * 30 + 15} cy={y * 28 + 14} r={1} fill="#1e293b" />
+                <circle key={`${x}-${y}`} cx={x * 30 + 15} cy={y * 28 + 14} r={1.2} fill="#334155" opacity="0.5" />
               ))
             )}
 
             {/* Wires */}
             {wires.map((w, i) => (
               <g key={i}>
-                <line x1={w.from[0]} y1={w.from[1]} x2={w.to[0]} y2={w.to[1]} stroke="#334155" strokeWidth={2} strokeDasharray="4,2" />
+                <line x1={w.from[0]} y1={w.from[1]} x2={w.to[0]} y2={w.to[1]} stroke="#64748b" strokeWidth={2} strokeDasharray="4,2" />
               </g>
             ))}
 
             {/* Main datapath arrow */}
             <defs>
               <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L8,3 z" fill="#334155" />
+                <path d="M0,0 L0,6 L8,3 z" fill="#64748b" />
               </marker>
             </defs>
-            <line x1={80} y1={200} x2={680} y2={200} stroke="#1e293b" strokeWidth={8} strokeDasharray="20,4" />
-            <text x={350} y={215} textAnchor="middle" fill="#334155" fontSize="10" fontFamily="monospace">DATAPATH</text>
+            <line x1={80} y1={200} x2={680} y2={200} stroke="#334155" strokeWidth={6} strokeDasharray="20,4" />
+            <text x={350} y={217} textAnchor="middle" fill="#64748b" fontSize="11" fontFamily="monospace" letterSpacing="2">DATAPATH</text>
+
+            {/* Horizontal connector lines between components */}
+            <line x1={80} y1={200} x2={110} y2={190} stroke="#06b6d4" strokeWidth={1.5} opacity="0.6" />
+            <line x1={190} y1={190} x2={260} y2={175} stroke="#3b82f6" strokeWidth={1.5} opacity="0.6" />
+            <line x1={350} y1={180} x2={430} y2={190} stroke="#8b5cf6" strokeWidth={1.5} opacity="0.6" />
+            <line x1={510} y1={190} x2={560} y2={190} stroke="#10b981" strokeWidth={1.5} opacity="0.6" />
+            <line x1={190} y1={310} x2={260} y2={310} stroke="#f43f5e" strokeWidth={1.5} opacity="0.6" />
+            <line x1={350} y1={310} x2={430} y2={310} stroke="#ef4444" strokeWidth={1.5} opacity="0.6" />
+            <line x1={520} y1={310} x2={560} y2={310} stroke="#06b6d4" strokeWidth={1.5} opacity="0.6" />
 
             {/* Components */}
             {COMPONENTS.map(comp => {
               const isHovered = hoverId === comp.id;
               const isSelected = selected?.id === comp.id;
+              const fillOpacity = isSelected ? '66' : isHovered ? '55' : '44';
               return (
                 <g key={comp.id} className="cursor-pointer"
                   onClick={() => setSelected(selected?.id === comp.id ? null : comp)}
                   onMouseEnter={() => setHoverId(comp.id)}
                   onMouseLeave={() => setHoverId(null)}>
+                  {/* Glow effect when selected/hovered */}
+                  {(isSelected || isHovered) && (
+                    <rect x={comp.x - 3} y={comp.y - 3} width={comp.w + 6} height={comp.h + 6} rx={9}
+                      fill={comp.color + '20'}
+                      stroke={comp.color + '60'}
+                      strokeWidth={1} />
+                  )}
                   <rect x={comp.x} y={comp.y} width={comp.w} height={comp.h} rx={6}
-                    fill={comp.color + (isSelected ? '40' : isHovered ? '25' : '15')}
+                    fill={comp.color + fillOpacity}
                     stroke={comp.color}
-                    strokeWidth={isSelected ? 2.5 : isHovered ? 2 : 1.5}
-                    className="transition-all" />
+                    strokeWidth={isSelected ? 2.5 : isHovered ? 2 : 1.5} />
                   <text x={comp.x + comp.w / 2} y={comp.y + comp.h / 2}
                     textAnchor="middle" dominantBaseline="central"
-                    fill={comp.color} fontSize="11" fontWeight="600" fontFamily="monospace">
+                    fill="#ffffff" fontSize="11" fontWeight="700" fontFamily="monospace">
                     {comp.label.split('\n').map((line, i, arr) => (
                       <tspan key={i} x={comp.x + comp.w / 2} dy={i === 0 ? (arr.length > 1 ? '-0.6em' : 0) : '1.2em'}>{line}</tspan>
                     ))}
                   </text>
+                  {/* Color dot indicator */}
+                  <circle cx={comp.x + 8} cy={comp.y + 8} r={3} fill={comp.color} opacity="0.9" />
                 </g>
               );
             })}
 
-            {/* Labels */}
-            <text x={20} y={145} fill="#475569" fontSize="10" fontFamily="monospace">INSTRUCTION FETCH →</text>
-            <text x={20} y={260} fill="#475569" fontSize="10" fontFamily="monospace">CONTROL LOGIC ↓</text>
+            {/* Section Labels */}
+            <text x={20} y={148} fill="#94a3b8" fontSize="9" fontFamily="monospace" fontWeight="500" letterSpacing="1">INSTRUCTION FETCH →</text>
+            <text x={20} y={265} fill="#94a3b8" fontSize="9" fontFamily="monospace" fontWeight="500" letterSpacing="1">CONTROL LOGIC ↓</text>
           </svg>
         </div>
       </div>

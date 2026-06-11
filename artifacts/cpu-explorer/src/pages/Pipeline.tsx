@@ -282,7 +282,7 @@ export default function Pipeline() {
   const hasForward = pipelineStages.EX?.forwardA || pipelineStages.EX?.forwardB;
 
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ paddingTop: '4rem', paddingLeft: '16rem' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <div className="p-6 space-y-6">
 
         {/* ======== HEADER ======== */}
