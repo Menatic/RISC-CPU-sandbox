@@ -11,8 +11,7 @@ Instead of presenting CPU architecture as textbook diagrams, Modern CPU Explorer
 # 🌐 Live Demo
 
 Try the application:
-https://your-vercel-link.vercel.app
-
+https://risc-cpu-sandbox.vercel.app/
 ---
 
 # 🎯 Vision
