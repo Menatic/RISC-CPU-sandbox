@@ -11,7 +11,7 @@ Instead of presenting CPU architecture as textbook diagrams, Modern CPU Explorer
 # 🌐 Live Demo
 
 Try the application:
-https://cpu-sandbox-with-hdl.vercel.app/
+https://cpu-tool-educational-sim.vercel.app/
 ---
 
 # 🎯 Vision
