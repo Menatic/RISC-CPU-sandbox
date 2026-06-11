@@ -99,17 +99,21 @@ export default function Verilog() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl">
+    <div className={`p-6 space-y-6 ${view === 'simulate' ? 'max-w-none' : 'max-w-7xl'}`}>
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Microchip className="w-6 h-6 text-primary" />
-            <h1 className="text-3xl font-bold">Verilog HDL Cores</h1>
+            <h1 className={`font-bold ${view === 'simulate' ? 'text-xl' : 'text-3xl'}`}>
+              {view === 'simulate' ? 'GTKWave — tb_riscv_core.vcd' : 'Verilog HDL Cores'}
+            </h1>
           </div>
-          <p className="text-muted-foreground max-w-2xl">
-            Production-style synthesizable RTL plus <strong className="text-foreground">in-browser RTL testbench simulation</strong> —
-            run the same program as <code className="text-xs bg-secondary px-1 rounded">tb_riscv_core.v</code> with live pipeline and waveforms.
-          </p>
+          {view !== 'simulate' && (
+            <p className="text-muted-foreground max-w-2xl">
+              Production-style synthesizable RTL plus <strong className="text-foreground">in-browser RTL testbench simulation</strong> —
+              run the same program as <code className="text-xs bg-secondary px-1 rounded">tb_riscv_core.v</code> with live pipeline and waveforms.
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
           <div className="flex rounded-lg border border-border overflow-hidden">
@@ -144,63 +148,61 @@ export default function Verilog() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { icon: Layers, label: 'Pipeline stages', value: String(profile.stages) },
-          { icon: Code2, label: 'HDL line count', value: `${loc}+` },
-          { icon: Cpu, label: 'RTL modules', value: String(totalModuleCount()) },
-          { icon: Building2, label: 'Repo path', value: profile.path.split('/').pop() ?? '' },
-        ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="rounded-lg border border-border bg-card p-4">
-            <Icon className="w-4 h-4 text-primary mb-2" />
-            <p className="text-2xl font-bold">{value}</p>
-            <p className="text-xs text-muted-foreground">{label}</p>
+      {view === 'simulate' ? (
+        <RtlBrowserSimulator core={core} />
+      ) : (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { icon: Layers, label: 'Pipeline stages', value: String(profile.stages) },
+              { icon: Code2, label: 'HDL line count', value: `${loc}+` },
+              { icon: Cpu, label: 'RTL modules', value: String(totalModuleCount()) },
+              { icon: Building2, label: 'Repo path', value: profile.path.split('/').pop() ?? '' },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="rounded-lg border border-border bg-card p-4">
+                <Icon className="w-4 h-4 text-primary mb-2" />
+                <p className="text-2xl font-bold">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Core profile */}
-      <div className="rounded-lg border border-border bg-card p-5 space-y-3">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <GitBranch className="w-4 h-4 text-primary" />
-          {profile.name}
-        </h2>
-        <p className="text-sm text-muted-foreground">{profile.subtitle}</p>
-        <ul className="grid md:grid-cols-2 gap-2">
-          {profile.highlights.map((h) => (
-            <li key={h} className="text-sm flex items-start gap-2">
-              <ChevronRight className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              {h}
-            </li>
-          ))}
-        </ul>
-        <p className="text-sm border-l-2 border-primary/50 pl-3 text-muted-foreground italic">
-          {profile.industryNote}
-        </p>
-      </div>
-
-      {core === '15stage' && (
-        <div className="rounded-lg border border-border bg-card p-5 space-y-3">
-          <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-            15-Stage Pipeline Map
-          </h3>
-          <StagePipelineViz activeStage={activeStage} />
-          {activeStage !== undefined && activeStage >= 0 && (
-            <p className="text-sm text-primary">
-              Selected module maps to stage S{activeStage}: {STAGES_15[activeStage]?.name}
+          <div className="rounded-lg border border-border bg-card p-5 space-y-3">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <GitBranch className="w-4 h-4 text-primary" />
+              {profile.name}
+            </h2>
+            <p className="text-sm text-muted-foreground">{profile.subtitle}</p>
+            <ul className="grid md:grid-cols-2 gap-2">
+              {profile.highlights.map((h) => (
+                <li key={h} className="text-sm flex items-start gap-2">
+                  <ChevronRight className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm border-l-2 border-primary/50 pl-3 text-muted-foreground italic">
+              {profile.industryNote}
             </p>
+          </div>
+
+          {core === '15stage' && (
+            <div className="rounded-lg border border-border bg-card p-5 space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                15-Stage Pipeline Map
+              </h3>
+              <StagePipelineViz activeStage={activeStage} />
+              {activeStage !== undefined && activeStage >= 0 && (
+                <p className="text-sm text-primary">
+                  Selected module maps to stage S{activeStage}: {STAGES_15[activeStage]?.name}
+                </p>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
 
-      {view === 'simulate' && (
-        <div className="rounded-lg border border-border bg-card p-5">
-          <RtlBrowserSimulator core={core} />
-        </div>
-      )}
-
-      {view === 'source' && (
+      {view === 'source' ? (
       <div className="grid lg:grid-cols-[240px_1fr_280px] gap-4 min-h-[560px]">
         <div className="rounded-lg border border-border bg-card p-3">
           <p className="text-xs font-semibold uppercase text-muted-foreground mb-3 px-2">Modules</p>
@@ -280,7 +282,7 @@ make sim`}
           </div>
         </div>
       </div>
-      )}
+      ) : null}
     </div>
   );
 }

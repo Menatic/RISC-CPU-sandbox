@@ -8,9 +8,6 @@ import { captureWaveSample, type WaveSample } from '@/engine/waveformTrace';
 import { RTL_PASS_REGS, RTL_TESTBENCH_ASM } from '@/data/rtlTestProgram';
 import { STAGES_15, type VerilogCoreId } from '@/data/verilogManifest';
 import { GtkWaveViewer } from '@/components/rtl/GtkWaveViewer';
-import {
-  Play, StepForward, RotateCcw, CheckCircle2, XCircle, Activity, Cpu, Radio,
-} from 'lucide-react';
 
 const STAGE_COLORS: Record<string, string> = {
   IF: '#06b6d4', ID: '#8b5cf6', EX: '#f59e0b', MEM: '#10b981', WB: '#f43f5e',
@@ -31,17 +28,17 @@ function StageBoxes({ stages, core }: { stages: PipelineState; core: VerilogCore
 
   if (core === '15stage') {
     return (
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-px">
         {STAGES_15.map((s) => (
           <div
             key={s.id}
-            className={`flex-1 min-w-[44px] rounded px-0.5 py-1.5 text-center border text-[9px] transition-all ${
+            className={`flex-1 min-w-[36px] px-0.5 py-1 text-center border text-[8px] font-mono ${
               active15 === s.n
-                ? 'bg-primary/25 border-primary text-primary font-bold scale-105'
-                : 'bg-secondary/30 border-border text-muted-foreground'
+                ? 'bg-[#001800] border-[#00ff00] text-[#00ff00]'
+                : 'bg-[#1c1c1c] border-[#333] text-[#666]'
             }`}
           >
-            <div className="font-mono">S{s.n}</div>
+            S{s.n}
           </div>
         ))}
       </div>
@@ -49,29 +46,23 @@ function StageBoxes({ stages, core }: { stages: PipelineState; core: VerilogCore
   }
 
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-5 gap-px">
       {ids.map((id) => {
         const slot = stages[id];
         return (
           <div
             key={id}
-            className="rounded-lg border p-2 min-h-[72px]"
-            style={{
-              borderColor: slot ? STAGE_COLORS[id] : undefined,
-              backgroundColor: slot ? `${STAGE_COLORS[id]}18` : undefined,
-            }}
+            className="border border-[#333] p-1.5 min-h-[52px] font-mono text-[9px]"
+            style={{ background: slot ? '#1a1a1a' : '#111' }}
           >
-            <p className="text-[10px] font-bold mb-1" style={{ color: STAGE_COLORS[id] }}>{id}</p>
+            <p className="font-bold mb-0.5" style={{ color: STAGE_COLORS[id] }}>{id}</p>
             {slot ? (
               <>
-                <p className="font-mono text-[10px] truncate">{slot.instr.mnemonic}</p>
-                <p className="text-[9px] text-muted-foreground">PC 0x{slot.instr.pc.toString(16)}</p>
-                {slot.stall && <p className="text-[9px] text-amber-400">STALL</p>}
-                {slot.flush && <p className="text-[9px] text-red-400">FLUSH</p>}
-                {slot.forwardA && <p className="text-[9px] text-cyan-400">FWD_A</p>}
+                <p className="text-[#ccc] truncate">{slot.instr.mnemonic}</p>
+                <p className="text-[#666]">0x{slot.instr.pc.toString(16)}</p>
               </>
             ) : (
-              <p className="text-[9px] text-muted-foreground">bubble</p>
+              <p className="text-[#444]">—</p>
             )}
           </div>
         );
@@ -108,7 +99,7 @@ function freshSnapshot(startPC: number): SimSnapshot {
     stats: { ...INITIAL_STATS },
     waveformSamples: [initialWaveSample(startPC)],
     executionMode: 'ready',
-    lastExplanation: 'Click Run to execute — GTKWave-style signal trace updates live.',
+    lastExplanation: 'Ready — press Full Trace or Animate.',
   };
 }
 
@@ -125,8 +116,8 @@ function applyStep(snap: SimSnapshot, instructions: ReturnType<typeof assemble>[
   };
   let expl = `Cycle ${r.cycleNum}`;
   if (r.retired) expl += ` — WB: ${r.retired.instr.mnemonic}`;
-  if (hist.stalls) expl += ' [load-use stall → hazard.stall=1]';
-  if (hist.flushes) expl += ' [branch flush]';
+  if (hist.stalls) expl += ' [stall]';
+  if (hist.flushes) expl += ' [flush]';
 
   const wave = captureWaveSample(
     r.cycleNum, r.newFetchPC, r.next, r.newRegisters, r.newStats,
@@ -193,7 +184,7 @@ export function RtlBrowserSimulator({ core }: { core: VerilogCoreId }) {
         if (next.executionMode === 'complete' && timerRef.current) clearInterval(timerRef.current);
         return next;
       });
-    }, core === '15stage' ? 80 : 140);
+    }, core === '15stage' ? 90 : 160);
   }, [assembled.instructions, core]);
 
   const runInstant = useCallback(() => {
@@ -208,81 +199,48 @@ export function RtlBrowserSimulator({ core }: { core: VerilogCoreId }) {
     setSnap(freshSnapshot(assembled.startPC));
     const t = setTimeout(() => {
       setSnap(runFullSim(assembled.startPC, assembled.instructions));
-    }, 350);
+    }, 300);
     return () => clearTimeout(t);
   }, [core, assembled.startPC, assembled.instructions]);
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-lg border border-green-500/30 bg-green-950/20 p-3 text-sm">
-        <strong className="text-green-400 font-mono">GTKWave-style VCD viewer</strong>
-        <span className="text-slate-400">
-          {' '}— 31 hardware signals (clk, PC, pipeline latches, hazard, forwarding, ALU, DMEM, regfile)
-          traced cycle-by-cycle. Same testbench as <code className="text-xs">tb_riscv_core.v</code>.
-        </span>
-      </div>
+    <div className="space-y-0">
+      <GtkWaveViewer
+        samples={snap.waveformSamples}
+        currentCycle={snap.stats.cycles}
+        className="w-full"
+        toolbar={{
+          onAnimate: run,
+          onFullTrace: runInstant,
+          onStep: step,
+          onReset: reset,
+          animateDisabled: done,
+          stepDisabled: done,
+          cycle: snap.stats.cycles,
+          ipc: snap.stats.ipc,
+          retired: snap.stats.instructionsRetired,
+          pass: done ? pass : null,
+          done,
+        }}
+      />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={run} disabled={done}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-medium disabled:opacity-50">
-          <Play className="w-4 h-4" /> Animate
-        </button>
-        <button type="button" onClick={runInstant}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-green-300 text-sm border border-slate-600">
-          <Radio className="w-4 h-4" /> Full Trace
-        </button>
-        <button type="button" onClick={step} disabled={done}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm hover:bg-secondary">
-          <StepForward className="w-4 h-4" /> Step
-        </button>
-        <button type="button" onClick={reset}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm hover:bg-secondary">
-          <RotateCcw className="w-4 h-4" /> Reset
-        </button>
-        <span className="text-sm text-muted-foreground ml-auto font-mono">
-          t={snap.stats.cycles} · IPC={snap.stats.ipc} · retired={snap.stats.instructionsRetired}
-          · signals={snap.waveformSamples.length}
-        </span>
-      </div>
-
-      {done && (
-        <div className={`flex items-center gap-2 rounded-lg border p-3 text-sm font-medium font-mono ${
-          pass ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300' : 'bg-red-500/10 border-red-500/40 text-red-300'
-        }`}>
-          {pass ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-          {pass
-            ? `[PASS] tb_riscv_core.v — x3=${snap.registers[3]} x4=${snap.registers[4]}`
-            : `[FAIL] expected x3=8 x4=8`}
-        </div>
-      )}
-
-      <p className="text-xs text-muted-foreground border-l-2 border-green-500/50 pl-3 font-mono">{snap.lastExplanation}</p>
-
-      {/* GTKWave viewer — primary focus */}
-      <GtkWaveViewer samples={snap.waveformSamples} currentCycle={snap.stats.cycles} />
-
-      <div className="grid lg:grid-cols-2 gap-4">
-        <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-          <h4 className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-            <Activity className="w-3 h-3" />
-            {core === '15stage' ? '15-Stage Pipeline' : '5-Stage Pipeline'}
-          </h4>
+      {/* Compact inspector strip — GTKWave auxiliary panel style */}
+      <div className="grid lg:grid-cols-[1fr_200px] gap-0 border border-t-0 border-[#808080] font-mono text-[10px]"
+        style={{ background: '#1c1c1c' }}>
+        <div className="p-2 border-r border-[#333]">
+          <p className="text-[#666] mb-1 text-[9px] uppercase tracking-wider">
+            {core === '15stage' ? 'dut.pipeline[15:0]' : 'dut.pipeline[4:0]'}
+          </p>
           <StageBoxes stages={snap.pipelineStages} core={core} />
+          <p className="text-[#555] mt-1.5 text-[9px]">{snap.lastExplanation}</p>
         </div>
-
-        <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-          <h4 className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-            <Cpu className="w-3 h-3" /> dut.regfile
-          </h4>
-          <div className="grid grid-cols-2 gap-2 font-mono text-sm">
-            {[
-              { n: 1, v: snap.registers[1] },
-              { n: 2, v: snap.registers[2] },
-              { n: 3, v: snap.registers[3], highlight: true },
-              { n: 4, v: snap.registers[4], highlight: true },
-            ].map(({ n, v, highlight }) => (
-              <div key={n} className={`rounded px-2 py-1.5 border font-mono text-xs ${highlight ? 'border-green-500/50 bg-green-500/10' : 'border-border'}`}>
-                x{n} = <span className="text-green-400">0x{(v >>> 0).toString(16).toUpperCase().padStart(8, '0')}</span>
+        <div className="p-2">
+          <p className="text-[#666] mb-1 text-[9px] uppercase tracking-wider">dut.regfile</p>
+          <div className="space-y-0.5">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="flex justify-between text-[#00ff00]">
+                <span className="text-[#888]">x{n}</span>
+                <span>0x{(snap.registers[n] >>> 0).toString(16).toUpperCase().padStart(8, '0')}</span>
               </div>
             ))}
           </div>
