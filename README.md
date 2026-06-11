@@ -1,6 +1,6 @@
 # 🚀 Modern CPU Explorer
 
-> A next-generation interactive computer architecture laboratory that transforms CPU design from static diagrams into a fully visual, executable, and explorable experience.
+A next-generation interactive computer architecture laboratory that transforms CPU design from static diagrams into a fully visual, executable, and explorable experience.
 
 Modern CPU Explorer is an advanced browser-based platform designed to help students, educators, engineers, and recruiters understand how modern processors actually work.
 
