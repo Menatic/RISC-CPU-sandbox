@@ -99,7 +99,7 @@ function freshSnapshot(startPC: number): SimSnapshot {
     stats: { ...INITIAL_STATS },
     waveformSamples: [initialWaveSample(startPC)],
     executionMode: 'ready',
-    lastExplanation: 'Ready — press Full Trace or Animate.',
+    lastExplanation: 'Ready — press Execute or Full Trace to run the testbench.',
   };
 }
 
@@ -197,11 +197,7 @@ export function RtlBrowserSimulator({ core }: { core: VerilogCoreId }) {
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setSnap(freshSnapshot(assembled.startPC));
-    const t = setTimeout(() => {
-      setSnap(runFullSim(assembled.startPC, assembled.instructions));
-    }, 300);
-    return () => clearTimeout(t);
-  }, [core, assembled.startPC, assembled.instructions]);
+  }, [core, assembled.startPC]);
 
   return (
     <div className="space-y-0">
@@ -210,11 +206,11 @@ export function RtlBrowserSimulator({ core }: { core: VerilogCoreId }) {
         currentCycle={snap.stats.cycles}
         className="w-full"
         toolbar={{
-          onAnimate: run,
+          onExecute: run,
           onFullTrace: runInstant,
           onStep: step,
           onReset: reset,
-          animateDisabled: done,
+          executeDisabled: done,
           stepDisabled: done,
           cycle: snap.stats.cycles,
           ipc: snap.stats.ipc,

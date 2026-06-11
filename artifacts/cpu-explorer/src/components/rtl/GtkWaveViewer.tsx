@@ -151,11 +151,11 @@ function SignalWaveRow({
 }
 
 export type GtkWaveToolbarProps = {
-  onAnimate?: () => void;
+  onExecute?: () => void;
   onFullTrace?: () => void;
   onStep?: () => void;
   onReset?: () => void;
-  animateDisabled?: boolean;
+  executeDisabled?: boolean;
   stepDisabled?: boolean;
   cycle: number;
   ipc: number;
@@ -240,9 +240,9 @@ export function GtkWaveViewer({ samples, currentCycle, toolbar, className }: Pro
 
         {toolbar && (
           <>
-            <button type="button" onClick={toolbar.onAnimate} disabled={toolbar.animateDisabled}
+            <button type="button" onClick={toolbar.onExecute} disabled={toolbar.executeDisabled}
               className="px-2 h-full border-r border-[#a0a0a0] hover:bg-[#d8d4cc] disabled:opacity-40 text-black">
-              ▶ Animate
+              ▶ Execute
             </button>
             <button type="button" onClick={toolbar.onFullTrace}
               className="px-2 h-full border-r border-[#a0a0a0] hover:bg-[#d8d4cc] text-black">
