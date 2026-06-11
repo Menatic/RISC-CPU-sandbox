@@ -11,6 +11,7 @@ Instead of presenting CPU architecture as textbook diagrams, Modern CPU Explorer
 
 Try the application:
 https://your-vercel-link.vercel.app
+
 ---
 
 # 🎯 Vision
