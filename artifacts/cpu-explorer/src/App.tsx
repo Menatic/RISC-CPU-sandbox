@@ -21,6 +21,7 @@ import Compare from "@/pages/Compare";
 import Interview from "@/pages/Interview";
 import Showcase from "@/pages/Showcase";
 import Speculative from "@/pages/Speculative";
+import Verilog from "@/pages/Verilog";
 
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/sandbox" component={Sandbox} />
           <Route path="/interview" component={Interview} />
           <Route path="/showcase" component={Showcase} />
+          <Route path="/verilog" component={Verilog} />
           <Route component={NotFound} />
         </Switch>
       </main>

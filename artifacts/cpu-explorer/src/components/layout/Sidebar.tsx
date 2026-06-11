@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { 
   Cpu, LayoutDashboard, GitBranch, Shuffle, Server, 
   Network, Activity, Layers, ActivitySquare, AlertTriangle,
-  History, BarChart2, BookOpen, Star, FileSearch
+  History, BarChart2, BookOpen, Star, FileSearch, Microchip
 } from 'lucide-react';
 
 const routes = [
@@ -19,6 +19,7 @@ const routes = [
   { path: '/ooo', label: 'Out of Order', icon: Shuffle },
   { path: '/speculative', label: 'Speculative', icon: FileSearch },
   { path: '/blueprint', label: 'Blueprint', icon: Cpu },
+  { path: '/verilog', label: 'Verilog HDL', icon: Microchip },
   { path: '/timeline', label: 'Timeline Gantt', icon: BarChart2 },
   { path: '/analytics', label: 'Analytics', icon: BarChart2 },
   { path: '/compare', label: 'Compare Lab', icon: Layers },
