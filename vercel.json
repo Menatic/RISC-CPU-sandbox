@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "installCommand": "corepack enable && pnpm install",
-  "buildCommand": "pnpm --filter @workspace/cpu-explorer run build",
-  "outputDirectory": "artifacts/cpu-explorer/dist",
+  "buildCommand": "pnpm --filter @workspace/cpu-explorer run build && cp -r artifacts/cpu-explorer/dist dist",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/(.*)",
