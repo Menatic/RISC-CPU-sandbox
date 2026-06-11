@@ -26,7 +26,7 @@ export const CORE_PROFILES: Record<
     name: 'RV32I 5-Stage Pipeline',
     subtitle: 'Patterson & Hennessy baseline — educational reference',
     stages: 5,
-    path: 'hdl/riscv-pipeline',
+    path: 'artifacts/cpu-explorer/hdl/riscv-pipeline',
     highlights: [
       'Classic IF → ID → EX → MEM → WB',
       'Data forwarding (EX/MEM, MEM/WB)',
@@ -41,7 +41,7 @@ export const CORE_PROFILES: Record<
     name: 'RV32I 15-Stage High-Performance Core',
     subtitle: 'Industry-depth front-end + OOO-ready backend',
     stages: 15,
-    path: 'hdl/riscv-pipeline-15stage',
+    path: 'artifacts/cpu-explorer/hdl/riscv-pipeline-15stage',
     highlights: [
       'BTB + 2-bit BHT branch prediction (S0)',
       'Decoupled 8-entry instruction queue (S3)',
@@ -101,28 +101,33 @@ export const MODULES_15STAGE: VerilogModuleMeta[] = [
   { id: 'tb15', file: 'tb_riscv_core_15stage.v', label: 'tb_riscv_core_15stage', category: 'Verification', description: 'Self-checking testbench for 15-stage core.' },
 ];
 
-// Eager-load all HDL sources for in-browser viewing
-// Paths relative to Vite project root (artifacts/cpu-explorer) → repo hdl/
-const files5 = import.meta.glob('../../hdl/riscv-pipeline/**/*.{v,vh}', {
+// Eager-load HDL sources at build time (must live under Vite project root: artifacts/cpu-explorer/hdl/)
+const files5 = import.meta.glob('/hdl/riscv-pipeline/**/*.{v,vh}', {
   query: '?raw',
   import: 'default',
   eager: true,
 }) as Record<string, string>;
 
-const files15 = import.meta.glob('../../hdl/riscv-pipeline-15stage/**/*.{v,vh}', {
+const files15 = import.meta.glob('/hdl/riscv-pipeline-15stage/**/*.{v,vh}', {
   query: '?raw',
   import: 'default',
   eager: true,
 }) as Record<string, string>;
 
-function basename(path: string): string {
-  return path.split('/').pop() ?? path;
+function normalizePath(path: string): string {
+  return path.replace(/\\/g, '/');
 }
 
 export function getSourceForModule(core: VerilogCoreId, file: string): string {
   const map = core === '5stage' ? files5 : files15;
-  const key = Object.keys(map).find((k) => basename(k) === file);
-  return key ? map[key] : `// Source not found: ${file}\n// See repository path: ${CORE_PROFILES[core].path}/${file}`;
+  const suffix = `/${file}`;
+  const key = Object.keys(map).find((k) => normalizePath(k).endsWith(suffix));
+  if (key) return map[key];
+  const keys = Object.keys(map);
+  if (keys.length === 0) {
+    return `// HDL bundle empty — rebuild required.\n// Expected: ${CORE_PROFILES[core].path}/${file}`;
+  }
+  return `// Source not found: ${file}\n// Available: ${keys.map((k) => normalizePath(k).split('/').pop()).join(', ')}`;
 }
 
 export function countHdlLines(core: VerilogCoreId): number {
